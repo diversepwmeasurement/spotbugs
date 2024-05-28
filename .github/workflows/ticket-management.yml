@@ -1,26 +1,20 @@
-name: 'Automated ticket management'
+jobs:
+  stale-pr-and-issue:
+    runs-on: self-hosted
+    steps:
+    - continue-on-error: true
+      uses: actions/stale@v9
+      with:
+        days-before-close: -1
+        days-before-stale: 30
+        exempt-all-pr-assignees: true
+        only-issue-labels: need info
+        stale-issue-label: need info
+        stale-pr-label: Stale
+name: Automated ticket management
 on:
-  schedule:
-    # Run the check every day.
-    # We use the release date of the first SpotBugs release,
-    # just to avoid periods of high load.
-    # https://github.com/spotbugs/spotbugs/releases/tag/3.1.0
-    - cron: '25 10 * * *'
-
+  repository_dispatch:
+    types: trigger-ga___ticket-management.yml
 permissions:
   issues: write
   pull-requests: write
-
-jobs:
-  stale-pr-and-issue:
-    # Mark stale issues and PRs, then close them 30 days later.
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/stale@v9
-        with:
-          days-before-stale: 30
-          days-before-close: -1
-          stale-pr-label: 'Stale'
-          stale-issue-label: 'need info'
-          only-issue-labels: 'need info'
-          exempt-all-pr-assignees: true
